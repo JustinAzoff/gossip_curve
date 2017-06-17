@@ -5,12 +5,13 @@ int main(int argn, char *argv[])
 
     char *bind;
 
-    if (argn < 3) {
+    if (argn < 2) {
         printf("Usage: %s tcp://*:9999 tcp://peer:port tcp://peer:port\n", argv[0]);
         exit(1);
     }
     zactor_t *server1 = zactor_new (zgossip, "server1");
     assert (server1);
+    //zstr_send (server1, "VERBOSE");
     zpoller_t *poller = zpoller_new (NULL);
     assert(poller);
     zpoller_add (poller, server1);
@@ -24,9 +25,11 @@ int main(int argn, char *argv[])
         printf("-  %s\n", argv[n]);
 		zstr_sendx (server1, "CONNECT", argv[n], NULL);
     }
+    zclock_sleep (1000);
 
     char *key_str = zsys_sprintf ("Pid-%d", getpid());
 
+    //zstr_sendx (server1, "PUBLISH", key_str, bind, NULL);
     zstr_sendx (server1, "PUBLISH", bind, key_str, NULL);
 
     while(true) {
