@@ -1,0 +1,8 @@
+zgossip
+    echo = installing CURVE security mechanism
+    security
+        mechanism = curve
+        private_key = keys/client_secret.txt
+    connect
+        local = tcp://localhost:9999
+            public-key = "mE)E/[.5A*(^p#gB@H9vPv./t4.fNS1oxwW.zxyU"

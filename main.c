@@ -5,10 +5,21 @@ int main(int argn, char *argv[])
 
     char *bind;
 
-    if (argn < 2) {
-        printf("Usage: %s tcp://*:9999 tcp://peer:port tcp://peer:port\n", argv[0]);
+    if (argn < 1) {
+        printf("Usage: CONFIG_FILE=... %s\n", argv[0]);
         exit(1);
     }
+
+    //Start authenticator
+    zactor_t *auth = zactor_new (zauth,NULL);
+    zstr_send(auth,"VERBOSE");
+    zsock_wait(auth);
+    zstr_sendx(auth,"ALLOW","127.0.0.1",NULL);
+    zsock_wait(auth);
+    //  Tell the authenticator to use the certificate store in ./certs
+    zstr_sendx (auth,"CURVE","certs",NULL);
+    ////
+
     zactor_t *server1 = zactor_new (zgossip, "server1");
     assert (server1);
     //zstr_send (server1, "VERBOSE");
@@ -16,16 +27,32 @@ int main(int argn, char *argv[])
     assert(poller);
     zpoller_add (poller, server1);
 
-    bind = argv[1];
-    printf("Will bind to %s\n", bind);
-    zstr_sendx (server1, "BIND", bind, NULL);
-
-    printf("Will connect to:\n");
-    for (int n=2; n<argn; n++) {
-        printf("-  %s\n", argv[n]);
-		zstr_sendx (server1, "CONNECT", argv[n], NULL);
+    char *config_file = getenv("CONFIG_FILE");
+    zconfig_t *config = NULL;
+    if (config_file) {
+        printf("Server config file %s\n", config_file);
+        zstr_sendx (server1, "LOAD", config_file, NULL);
+        config = zconfig_load (config_file);
     }
+    if(!config) {
+        puts("need config");
+        zactor_destroy(&server1);
+        exit(1);
+    };
+
     zclock_sleep (1000);
+    printf("Will connect to:\n");
+    zconfig_t *connect_section = zconfig_locate (config, "zgossip/connect");
+    if (connect_section)
+          connect_section = zconfig_child (connect_section);
+    while(connect_section) {
+        char *endpoint = zconfig_value(connect_section);
+        printf("-  %s\n", endpoint);
+		zstr_sendx (server1, "CONNECT", endpoint, NULL);
+        connect_section = zconfig_next (connect_section);
+    }
+        
+    bind = zsys_sprintf ("Bind-pid-%d", getpid());
 
     char *key_str = zsys_sprintf ("Pid-%d", getpid());
 

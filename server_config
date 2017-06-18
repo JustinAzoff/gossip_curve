@@ -1,0 +1,9 @@
+zgossip
+    echo = installing CURVE security mechanism
+    security
+        mechanism = curve
+        private_key = keys/server_secret.txt
+
+    echo = binding gossip test service to 'tcp://*:9999'
+    bind
+        endpoint = tcp://*:9999
