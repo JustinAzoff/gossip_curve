@@ -22,7 +22,8 @@ int main(int argn, char *argv[])
 
     zactor_t *server1 = zactor_new (zgossip, "server1");
     assert (server1);
-    //zstr_send (server1, "VERBOSE");
+    zstr_send (server1, "VERBOSE");
+    //zstr_sendx (server1, "SET", "server/timeout", "10", NULL);
     zpoller_t *poller = zpoller_new (NULL);
     assert(poller);
     zpoller_add (poller, server1);
@@ -54,17 +55,21 @@ int main(int argn, char *argv[])
         
     bind = zsys_sprintf ("Bind-pid-%d", getpid());
 
-    char *key_str = zsys_sprintf ("Pid-%d", getpid());
+    int n = 0;
+    char *key_str = zsys_sprintf ("Pid-%d-%d", getpid(), n);
 
     //zstr_sendx (server1, "PUBLISH", key_str, bind, NULL);
     zstr_sendx (server1, "PUBLISH", bind, key_str, NULL);
 
     while(true) {
-        zsock_t *which = (zsock_t *) zpoller_wait (poller, 1000);
+        zsock_t *which = (zsock_t *) zpoller_wait (poller, 5000);
         if (!which) {
             if (zpoller_terminated(poller)) {
                 break;
             }
+            //n++;
+            //char *key_str = zsys_sprintf ("Pid-%d-%d", getpid(), n);
+            //zstr_sendx (server1, "PUBLISH", bind, key_str, NULL);
             continue;
         }
         char *command = NULL, *key, *value;
