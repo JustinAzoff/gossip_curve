@@ -4,9 +4,9 @@ zgossip
         mechanism = curve
         private-key = keys/server_secret.txt
 
-    echo = binding gossip test service to 'tcp://*:9998'
+    echo = binding gossip test service to 'tcp://*:9999'
     bind
-        endpoint = tcp://*:9998
+        endpoint = tcp://*:9999
     connect
-        local = tcp://localhost:9999
+        local = tcp://localhost:9998
             public-key = "mE)E/[.5A*(^p#gB@H9vPv./t4.fNS1oxwW.zxyU"

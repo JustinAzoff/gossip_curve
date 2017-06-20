@@ -1,0 +1,4 @@
+zgossip
+    echo = binding gossip test service to 'tcp://*:9999'
+    bind
+        endpoint = tcp://*:9999

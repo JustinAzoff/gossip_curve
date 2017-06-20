@@ -1,0 +1,3 @@
+zgossip
+    connect
+        local = tcp://localhost:9999
