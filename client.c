@@ -17,7 +17,7 @@ int main(int argn, char *argv[])
     printf("Will connect to:\n");
     for (int n=1; n<argn; n++) {
         printf("-  %s\n", argv[n]);
-		zstr_sendx (server1, "CONNECT", argv[n], NULL);
+        zstr_sendx (server1, "CONNECT", argv[n], NULL);
     }
 
     char *key_str = zsys_sprintf ("Client-%d", getpid());
