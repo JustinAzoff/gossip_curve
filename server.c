@@ -12,7 +12,7 @@ int main(int argn, char *argv[])
     zactor_t *server1 = zactor_new (zgossip, "server1");
     assert (server1);
     zstr_send (server1, "VERBOSE");
-    zstr_sendx (server1, "SET", "server/timeout", "60000", NULL);
+    //zstr_sendx (server1, "SET", "server/timeout", "60000", NULL);
     zpoller_t *poller = zpoller_new (NULL);
     assert(poller);
     zpoller_add (poller, server1);
