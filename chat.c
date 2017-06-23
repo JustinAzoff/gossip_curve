@@ -34,8 +34,13 @@ chat_actor (zsock_t *pipe, void *args)
     zyre_t *node = zyre_new ((char *) args);
     if (!node)
         return;                 //  Could not create new node
+    zyre_set_verbose(node);
 
+    zyre_set_keyfile (node, "keys/client_secret.txt");
+    zyre_gossip_load (node, "client_config");
+    zyre_gossip_connect (node, "tcp://localhost:9999");
     zyre_start (node);
+
     zyre_join (node, "CHAT");
     zsock_signal (pipe, 0);     //  Signal "ready" to caller
 
@@ -105,6 +110,17 @@ main (int argc, char *argv [])
         puts ("syntax: ./chat myname");
         exit (0);
     }
+
+    //Start authenticator
+    zactor_t *auth = zactor_new (zauth,NULL);
+    zstr_send(auth,"VERBOSE");
+    zsock_wait(auth);
+    //zstr_sendx(auth,"ALLOW","0.0.0.0",NULL);
+    //zsock_wait(auth);
+    //  Tell the authenticator to use the certificate store in ./certs
+    zstr_sendx (auth,"CURVE","certs",NULL);
+    ////
+
     zactor_t *actor = zactor_new (chat_actor, argv [1]);
     assert (actor);
     
