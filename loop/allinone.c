@@ -1,6 +1,6 @@
 #include "zgossip.h"
 
-#define MAX_MESSAGES 10000
+#define MAX_MESSAGES 1000
 
 void drain(zpoller_t *poller)
 {
@@ -48,10 +48,6 @@ int main(int argn, char *argv[])
 
     zpoller_add (poller, server1);
     zpoller_add (poller, server2);
-
-    //Uncomment this and things work ok
-    //zclock_sleep (1000);
-    zclock_sleep (1000);
 
     zstr_sendx (server1, "PUBLISH", "one", "one", NULL);
     zstr_sendx (server2, "PUBLISH", "two", "two", NULL);
