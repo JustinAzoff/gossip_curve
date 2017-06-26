@@ -49,9 +49,6 @@ int main(int argn, char *argv[])
     zpoller_add (poller, server1);
     zpoller_add (poller, server2);
 
-    zstr_sendx (server1, "PUBLISH", "one", "one", NULL);
-    zstr_sendx (server2, "PUBLISH", "two", "two", NULL);
-
     drain(poller);
 
     zclock_sleep (1000);
