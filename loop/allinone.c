@@ -32,6 +32,8 @@ zactor_t * setup_actor(char *name, const char *bind, const char *connect, const 
     zstr_sendx (server, "VERBOSE", NULL);
     zstr_sendx (server, "BIND", bind, NULL);
     zstr_sendx (server, "CONNECT", connect, NULL);
+    //Uncomment this and things mostly work, aside from a bunch of INVALIDS
+    //zclock_sleep (1000);
     zstr_sendx (server, "PUBLISH", key, value, NULL);
     return server;
 }
